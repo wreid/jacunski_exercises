@@ -1,0 +1,5 @@
+# ignore .txt files (usually output)
+*.txt
+# but do track README
+!README.txt
+
