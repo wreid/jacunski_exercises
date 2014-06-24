@@ -71,8 +71,6 @@ def main(argv):
 		txt = list_file.read()
 		terms = txt.splitlines()
 
-	print terms[9]	
-
 	if check_files(input_name, output_name):
 		with open(output_name, open_type) as output: 
 			# checks if the file is compressed
