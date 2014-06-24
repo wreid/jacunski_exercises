@@ -2,25 +2,6 @@ import sys, gzip, csv
 from sys import argv
 from os.path import exists
 
-input_name, output_name, gene, header_length = sys.argv[1:5]
-
-# sanitizes inputs
-
-x = []
-for number in sys.argv[5:]:
-	try:
-		number = int(number)
-		x.append(number)
-	except TypeError:
-		print 'Column number must be an integer'
-		sys.exit()
-
-try:
-	h = int(header_length)
-except TypeError:
-	print 'Header length must be an integer'
-	sys.exit()
-
 def check_files(f1, f2):
 	"""checks if the input and output files exist"""
 	global open_type
@@ -49,28 +30,46 @@ def check_files(f1, f2):
 		print 'Writing output file.'
 		return True
 
-def csv_loop(inp, out, delimiter):
+def csv_loop(inp, out, delimiter, term, fields):
 	"""uses csv to read file and print appropriate lines"""
 	rd = csv.reader(inp, delimiter=delimiter)
 	wr = csv.writer(out, delimiter=delimiter)
 	# loops through list of fields in the row, writes the [x] field
 	i = 0
 	for columns in rd:
-		if gene in columns:
-			wr.writerow([columns[y] for y in x])
+		if term in columns:
+			wr.writerow([columns[y] for y in fields])
 
 def main(argv):
+
+	input_name, output_name, gene, header_length = argv[1:5]
+	# fields to be printed
+	x = []
+
+	# sanitizes inputs
+	for number in sys.argv[5:]:
+		try:
+			number = int(number)
+			x.append(number)
+		except TypeError:
+			print 'Column number must be an integer'
+			sys.exit()
+
+	try:
+		h = int(header_length)
+	except TypeError:
+		print 'Header length must be an integer'
+		sys.exit()
 
 	if check_files(input_name, output_name):
 		with open(output_name, open_type) as output: 
 			# checks if the file is compressed
 			if input_name[-3:] == '.gz':
 				with gzip.open(input_name, 'rb') as f:
-					csv_loop(f, output, '\t')
-
+					csv_loop(f, output, '\t', gene, x)
 			else:
 				with open(input_name, 'rb') as f:
-					csv_loop(f, output, '\t')
+					csv_loop(f, output, '\t', gene, x)
 		print 'Completed.'
 
 	else:
@@ -78,4 +77,4 @@ def main(argv):
 		sys.exit()
 
 if __name__ == '__main__':
-	main(sys.argv[1:])
+	main(sys.argv)
