@@ -2,12 +2,6 @@ import sys, gzip, csv
 from sys import argv
 from os.path import exists
 
-
-# declares open_type as an empty string with global scope
-open_type = ''
-
-# sanitizes inputs
-
 def check_files(f1, f2):
 	"""checks if the input and output files exist"""
 	global open_type
@@ -48,13 +42,17 @@ def csv_loop(inp, out, delimiter, l, numbers):
 			if any(z in s for s in row):
 				# print 'true'
 				wr.writerow([row[y] for y in numbers])
+		# resets the csv reader to the top of the file to search for 
+		# the next item in z
 		inp.seek(0)
 
 def main(argv):
 
 	input_name, output_name, terms_file, header_length = argv[1:5]
-
+	
+	# sanitizes inputs
 	x = []
+
 	for number in sys.argv[5:]:
 		try:
 			number = int(number)
