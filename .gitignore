@@ -1,5 +1,5 @@
 # ignore .txt files (usually output)
 *.txt
-# but do track README
+# but do track README and LICENSE
 !README.txt
-
+!LICENSE.txt
