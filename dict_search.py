@@ -9,26 +9,25 @@ from os.path import exists
 
 
 def main(arguments):
-
+    # unpacks arguments
     input_name, output_name, terms_file, in_number = arguments[1:5]
+    # parses the in_number argument into file_header and a list of ints
     header_length, field_nums = parse_num(in_number)
-    # print header_length
-    # print field_nums
 
+    # checks files and designates proper flags for file open() statements
     open_flag = check_files(input_name, output_name)
     read_flag = 'rb'
 
+    # initializes dictionary and loads terms from file
     t = {}
     terms = load_file(terms_file, read_flag)
     load_terms(terms, t)
-    #print t
 
-
+    # loads input and output files
     i = load_file(input_name, read_flag)
     o = load_file(output_name, open_flag)
 
-    #print i.read()
-
+    #runs read/write loops over files, checking for entries in the terms dict
     csv_loop(i, o, '\t', t, field_nums)
 
 
@@ -109,6 +108,11 @@ def load_file(file_name, flag):
 
 
 def parse_num(num):
+    """
+    Parses the final argument, a group of ints not separated by spaces,
+    into useable inputs. Creates a list of ints to be used as an index for
+    the fields to be written.
+    """
     a = []
     for i in range(0, len(num)):
         try:
