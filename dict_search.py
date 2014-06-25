@@ -13,7 +13,7 @@ def main(arguments):
     input_name, output_name, terms_file, in_number = arguments[1:5]
     header_length, field_nums = parse_num(in_number)
     # print header_length
-    print field_nums
+    # print field_nums
 
     open_flag = check_files(input_name, output_name)
     read_flag = 'rb'
@@ -39,9 +39,8 @@ def csv_loop(inp, out, delimiter, di, fields):
     # loops through list of fields in the row, writes the [x] field
     for row in rd:
         #print row
-        for w in row:
-            if w in di:
-                wr.writerow([row[y] for y in fields])
+        if any(w in di for w in row):
+            wr.writerow([row[y] for y in fields])
 
 
 def load_terms(inp, d):
