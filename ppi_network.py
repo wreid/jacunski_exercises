@@ -7,6 +7,13 @@ from sys import exit
 
 def main(args):
     input_file = args[1]
+    input_num = args[2]
+    try:
+        dthresh = int(input_num)
+    except TypeError:
+        print 'Threshold number must be an integer.'
+        exit()
+
     try:
         inp = str(input_file)
     except TypeError:
@@ -18,7 +25,12 @@ def main(args):
     add_edges(load_txt(inp), G)
     del_dupl(G)
 
-    
+    degree_threshold(dthresh, G)
+    print nx.degree(G)
+
+    #nx.draw(G)
+    #plt.pyplot.show()
+
 
 def load_txt(fname):
     """
@@ -38,7 +50,7 @@ def add_edges(input, graph):
     converts each line into a tuple of two proteins,
     adding the tuple as a pair of nodes connected by and edge
     """
-    for line in txt:
+    for line in input:
         l = tuple(line.split())
         graph.add_edge(*l)
 
@@ -51,6 +63,11 @@ def del_dupl(graph):
         if edge[0] == edge[1]:
             graph.remove_edge(edge[0], edge[1])
 
+
+def degree_threshold(thresh, graph):
+    for node in nx.degree(graph):
+        if graph[node] < thresh:
+            graph.remove_node(node)
 
 if __name__ == '__main__':
     main(argv)
