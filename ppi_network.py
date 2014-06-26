@@ -26,10 +26,10 @@ def main(args):
     del_dupl(G)
 
     degree_threshold(dthresh, G)
-    print nx.degree(G)
 
-    #nx.draw(G)
-    #plt.pyplot.show()
+
+    nx.draw(G)
+    plt.pyplot.show()
 
 
 def load_txt(fname):
@@ -65,9 +65,13 @@ def del_dupl(graph):
 
 
 def degree_threshold(thresh, graph):
+    counter = 0
     for node in nx.degree(graph):
-        if graph[node] < thresh:
+        if nx.degree(graph)[node] < thresh:
             graph.remove_node(node)
+            counter += 1
+    print '%i nodes removed.' % counter
 
+    
 if __name__ == '__main__':
     main(argv)
