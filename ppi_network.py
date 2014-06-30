@@ -1,44 +1,57 @@
-#!/usr/bin
+#!/usr/bin/env
 
 import networkx as nx
-import matplotlib as plt
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
 from sys import argv
 from sys import exit
 
 def main(args):
-    input_file = args[1]
-    input_num = args[2]
-    try:
-        dthresh = int(input_num)
-    except TypeError:
-        print 'Threshold number must be an integer.'
-        exit()
+    input_file1 = args[1]
+    input_file2 = args[2]
 
     try:
-        inp = str(input_file)
+        inp1 = str(input_file1)
     except TypeError:
         print 'Input file name must be a string.'
         exit()
 
-    G = nx.Graph()
+    try:
+        inp2 = str(input_file2)
+    except TypeError:
+        print 'Input file name must be a string.'
+        exit()
 
-    load_txt(inp, G)
-    del_dupl(G)
+    Y = nx.Graph()
+    H = nx.Graph()
 
+    load_txt(inp2, Y)
+    del_dupl(Y)
 
-    components = sorted(nx.connected_components(G), key=len, reverse=True)
-    graphs = list(nx.connected_component_subgraphs(G, copy=True))
-    M = nx.Graph(graphs[0])
-    removed = 0
+    load_txt(inp1, H)
+    del_dupl(H)
 
-    for component in components[1:]:
-        removed = removed + len(component)
+    print '\nYEAST'
+    MY = largest_component(Y)
 
-    print '%d nodes removed\n' % removed
-    print '%d components removed\n' % len(components[1:])
+    print 'HUMAN'
+    MH = largest_component(H)
 
-    print '%d nodes and %d edges in main component\n' % (len(M.nodes()), len(M.edges()))
-
+    plt.xlabel('degree', fontsize=14, color='blue')
+    plt.ylabel('frequency', fontsize=14, color='blue')
+    plt.autoscale(enable=True)
+    n1, bins1, patches1 = plt.hist(nx.degree(MY).values(), \
+        bins=np.max(nx.degree(MY).values())/25, log=True, histtype='bar', \
+        color='blue', alpha=1.0)
+    n2, bins2, patches2 = plt.hist(nx.degree(MH).values(), \
+        bins=np.max(nx.degree(MH).values())/25, log=True, histtype='bar', \
+        color='red', alpha=.3)
+    d, p = stats.ks_2samp(n1, n2)
+    print 'D value of %f' % d
+    print 'P value of %f' % p
+    plt.show()
+    plt.close()
 
 
 def load_txt(fname, graph):
@@ -64,6 +77,33 @@ def del_dupl(graph):
         if edge[0] == edge[1]:
             graph.remove_edge(edge[0], edge[1])
 
+
+def largest_component(graph):
+    """
+    makes a new graph of the largest component in the input graph
+    """
+    # find and output graph
+    graphs = list(nx.connected_component_subgraphs(graph, copy=True))
+    most = 0
+    for subgraph in graphs:
+        if len(list(subgraph)) >= most:
+            most = len(list(subgraph))
+            out_graph = nx.Graph(subgraph)
+
+    # print info
+    components = sorted(nx.connected_components(graph), key=len, reverse=True)
+    removed = 0
+
+    for component in components[1:]:
+        removed = removed + len(component)
+    print '%d nodes removed' % removed
+    print '%d components removed' % len(components[1:])
+    print '%d nodes and %d edges in main component\n' % (len(out_graph.nodes()), \
+        len(out_graph.edges()))
+
+    return out_graph
+    
+    
 
 
 if __name__ == '__main__':
