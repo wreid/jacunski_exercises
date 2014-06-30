@@ -20,39 +20,40 @@ def main(args):
         print 'Input file name must be a string.'
         exit()
 
-    G=nx.Graph()
+    G = nx.Graph()
 
-    add_edges(load_txt(inp), G)
+    load_txt(inp, G)
     del_dupl(G)
 
-    degree_threshold(dthresh, G)
+
+    components = sorted(nx.connected_components(G), key=len, reverse=True)
+    graphs = list(nx.connected_component_subgraphs(G, copy=True))
+    M = nx.Graph(graphs[0])
+    removed = 0
+
+    for component in components[1:]:
+        removed = removed + len(component)
+
+    print '%d nodes removed\n' % removed
+    print '%d components removed\n' % len(components[1:])
+
+    print '%d nodes and %d edges in main component\n' % (len(M.nodes()), len(M.edges()))
 
 
-    nx.draw(G)
-    plt.pyplot.show()
 
-
-def load_txt(fname):
+def load_txt(fname, graph):
     """
-    loads text from a file and removes whitespace
+    loads text from a file, removes whitespace and loads
+    each line as two nodes connected by an edge
     """
     f = open(fname, 'rb')
     txt = f.readlines()
 
     for line in txt:
         line.strip()
-
-    return txt
-
-
-def add_edges(input, graph):
-    """
-    converts each line into a tuple of two proteins,
-    adding the tuple as a pair of nodes connected by and edge
-    """
-    for line in input:
         l = tuple(line.split())
-        graph.add_edge(*l)
+        if l[0] != l[1]:
+            graph.add_edge(*l)
 
 
 def del_dupl(graph):
@@ -64,14 +65,6 @@ def del_dupl(graph):
             graph.remove_edge(edge[0], edge[1])
 
 
-def degree_threshold(thresh, graph):
-    counter = 0
-    for node in nx.degree(graph):
-        if nx.degree(graph)[node] < thresh:
-            graph.remove_node(node)
-            counter += 1
-    print '%i nodes removed.' % counter
 
-    
 if __name__ == '__main__':
     main(argv)
