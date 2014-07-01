@@ -38,15 +38,16 @@ def main(args):
     print 'HUMAN'
     MH = largest_component(H)
 
-    plt.xlabel('degree', fontsize=14, color='blue')
-    plt.ylabel('frequency', fontsize=14, color='blue')
+    plt.xlabel('Degree', fontsize=14, color='black')
+    plt.ylabel('Frequency', fontsize=14, color='black')
+    plt.title('PPI of Human and Yeast genomes (BioGrid)', fontsize=16, color='black')
     plt.autoscale(enable=True)
     n1, bins1, patches1 = plt.hist(nx.degree(MY).values(), \
         bins=np.max(nx.degree(MY).values())/25, log=True, histtype='bar', \
-        color='blue', alpha=1.0)
+        color='red', alpha=.8)
     n2, bins2, patches2 = plt.hist(nx.degree(MH).values(), \
         bins=np.max(nx.degree(MH).values())/25, log=True, histtype='bar', \
-        color='red', alpha=.3)
+        color='black', alpha=.3)
     d, p = stats.ks_2samp(n1, n2)
     print 'D value of %f' % d
     print 'P value of %f' % p
@@ -83,21 +84,15 @@ def largest_component(graph):
     makes a new graph of the largest component in the input graph
     """
     # find and output graph
-    graphs = list(nx.connected_component_subgraphs(graph, copy=True))
-    most = 0
-    for subgraph in graphs:
-        if len(list(subgraph)) >= most:
-            most = len(list(subgraph))
-            out_graph = nx.Graph(subgraph)
+    graphs = sorted(list(nx.connected_component_subgraphs(graph, copy=True)), key=len, reverse=True)
+    out_graph = graphs[0]
 
-    # print info
-    components = sorted(nx.connected_components(graph), key=len, reverse=True)
+    # print info about removed
     removed = 0
-
-    for component in components[1:]:
-        removed = removed + len(component)
+    for subgraph in graphs[1:]:
+        removed = removed + len(subgraph.nodes())
     print '%d nodes removed' % removed
-    print '%d components removed' % len(components[1:])
+    print '%d components removed' % len(graphs[1:])
     print '%d nodes and %d edges in main component\n' % (len(out_graph.nodes()), \
         len(out_graph.edges()))
 
