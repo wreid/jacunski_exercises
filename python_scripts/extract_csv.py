@@ -45,8 +45,8 @@ if check_files(input_name, output_name):
 		# checks if the file is compressed
 		if input_name[-3:] == '.gz':
 			with gzip.open(input_name, 'rb') as f:
-				rd = csv.reader(f, delimiter='\t')
-				wr = csv.writer(output, delimiter='\t')
+				rd = csv.reader(f)
+				wr = csv.writer(output)
 				# loops through list of fields in the row, writes the [x] field
 				i = 0
 				for columns in rd:
@@ -57,8 +57,8 @@ if check_files(input_name, output_name):
 
 		else:
 			with open(input_name, 'rb') as f:
-				rd = csv.reader(f, delimiter='\t')
-				wr = csv.writer(output, delimiter='\t')
+				rd = csv.reader(f)
+				wr = csv.writer(output)
 				i = 0
 				for columns in rd:
 					if i < h:

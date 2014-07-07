@@ -11,17 +11,8 @@ def main(args):
     input_file1 = args[1]
     input_file2 = args[2]
 
-    try:
-        inp1 = str(input_file1)
-    except TypeError:
-        print 'Input file name must be a string.'
-        exit()
-
-    try:
-        inp2 = str(input_file2)
-    except TypeError:
-        print 'Input file name must be a string.'
-        exit()
+    inp1 = sanitize_name(input_file1)
+    inp2 = sanitize_name(input_file2)
 
     Y = nx.Graph()
     H = nx.Graph()
@@ -54,6 +45,14 @@ def main(args):
     plt.show()
     plt.close()
 
+
+def sanitize_name(filen):
+    try:
+        inp = str(filen)
+    except TypeError:
+        print 'Input file name must be a string.'
+        exit()
+    return inp
 
 def load_txt(fname, graph):
     """
