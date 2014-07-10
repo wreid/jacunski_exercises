@@ -48,15 +48,15 @@ def main(args):
     #print "%d nodes deleted\n" % len(k)
     #print k
 
-    nx.draw(graphs[0], node_size=60, line_width=.1)
-    plt.show()
+    #nx.draw(graphs[0], node_size=60, line_width=.1)
+    #plt.show()
 
 
 def load_terms(inp, d):
     """
     Takes file as input, creates a list of words, iterates over the list, 
     checking if each word is in the dictionary. If the word isn't, it 
-    creates an entry with value 1. If it is, it adds 1 to the existing entry.
+    creates an entry with value True. 
     """
     x = []
     for line in inp.readlines():
@@ -66,7 +66,7 @@ def load_terms(inp, d):
         if word in d:
             pass
         else:
-            d[word] = 'exists'
+            d[word] = True
 
 
 
